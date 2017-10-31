@@ -101,6 +101,9 @@ if [ -n "$BLACKLIST" ]; then
 	done
 fi
 
+#Using depmod from kmod, and that currently requires resetting dependencies.
+/sbin/depmod -a
+
 # Start Udev to populate /dev and handle hotplug events
 echo -n "${BLUE}Starting udev daemon for hotplug support...${NORMAL}"
 #/sbin/udevd --daemon 2>/dev/null >/dev/null

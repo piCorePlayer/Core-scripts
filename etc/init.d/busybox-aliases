@@ -38,9 +38,10 @@ du() {
     busybox du "$@"
 }
 
-depmod() {
-    busybox depmod "$@"
-}
+# Depmod provided by kmod for piCorePlayer
+#depmod() {
+#    busybox depmod "$@"
+#}
 
 expr() {
     busybox expr "$@"
