@@ -1,0 +1,33 @@
+SUBSYSTEM=="input", GROUP="staff", MODE="0660"
+SUBSYSTEM=="i2c-dev", GROUP="staff", MODE="0660"
+SUBSYSTEM=="spidev", GROUP="staff", MODE="0660"
+SUBSYSTEM=="bcm2835-gpiomem", GROUP="staff", MODE="0660"
+
+SUBSYSTEM=="gpio", GROUP="staff", MODE="0660"
+SUBSYSTEM=="gpio*", PROGRAM="/bin/sh -c '\
+	chown -R root:staff /sys/class/gpio && chmod -R 770 /sys/class/gpio;\
+	chown -R root:staff /sys/devices/virtual/gpio && chmod -R 770 /sys/devices/virtual/gpio;\
+	chown -R root:staff /sys$devpath && chmod -R 770 /sys$devpath\
+'"
+
+KERNEL=="ttyAMA[01]", PROGRAM="/bin/sh -c '\
+	ALIASES=/proc/device-tree/aliases; \
+	if cmp -s $ALIASES/uart0 $ALIASES/serial0; then \
+		echo 0;\
+	elif cmp -s $ALIASES/uart0 $ALIASES/serial1; then \
+		echo 1; \
+	else \
+		exit 1; \
+	fi\
+'", SYMLINK+="serial%c"
+
+KERNEL=="ttyS0", PROGRAM="/bin/sh -c '\
+	ALIASES=/proc/device-tree/aliases; \
+	if cmp -s $ALIASES/uart1 $ALIASES/serial0; then \
+		echo 0; \
+	elif cmp -s $ALIASES/uart1 $ALIASES/serial1; then \
+		echo 1; \
+	else \
+		exit 1; \
+	fi \
+'", SYMLINK+="serial%c"
