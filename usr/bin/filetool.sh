@@ -96,13 +96,13 @@ if [ $DRYRUN ]; then
     if [ -f "/${entry}" ]; then
       size=`sudo /bin/ls -al "/${entry}" | awk '{print $5}'`
       totalsize=$(($totalsize + $size))
-      sizemb=`dc $size 1024 / 1024 / p`
+      sizemb=$(dc -e"$size 1024 / 1024 / p")
       printf "%6.2f MB  /%s\n" $sizemb "$entry"
     fi
   done < /tmp/backup_dryrun_list
   rm /tmp/backup_dryrun_list
-  totalsizemb=`dc $totalsize 1024 / 1024 / p`
-  totalcompressedsizemb=`dc $totalcompressedsize 1024 / 1024 / p`
+  totalsizemb=$(dc -e"$totalsize 1024 / 1024 / p")
+  totalcompressedsizemb=$(dc -e"$totalcompressedsize 1024 / 1024 / p")
   printf "\nTotal backup size (uncompressed):  %6.2f MB (%d bytes)\n" $totalsizemb $totalsize
   printf "Total backup size (compressed)  :  %6.2f MB (%d bytes)\n\n" $totalcompressedsizemb $totalcompressedsize
   exit 0

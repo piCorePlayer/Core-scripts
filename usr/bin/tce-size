@@ -18,7 +18,7 @@ for F in `sed 's/ //g' "$app".tree | sort -f | uniq`; do
       size=`grep -w "^$F" sizelist  | awk '{print $2}'`
       case $size in
       [0-9]*)
-	 sizemb=`dc $size 1024 / 1024 / p`
+	 sizemb=$(dc -e"$size 1024 / 1024 / p")
 	 if [ -f "$localtce"/optional/"$F" ]; then
 		 totalsize_installed=$(($totalsize_installed + $size))
 		 echo -n "  "
@@ -67,9 +67,9 @@ if [ -n "$app" ]; then
    get_dependencies $app
 
    totalsize=$(($totalsize_needed + $totalsize_installed))
-   totalsizemb=`dc $totalsize 1024 / 1024 / p`
-   totalsize_neededmb=`dc $totalsize_needed 1024 / 1024 / p`
-   totalsize_installedmb=`dc $totalsize_installed 1024 / 1024 / p`
+   totalsizemb=$(dc -e"$totalsize 1024 / 1024 / p")
+   totalsize_neededmb=$(dc -e"$totalsize_needed 1024 / 1024 / p")
+   totalsize_installedmb=$(dc -e"$totalsize_installed 1024 / 1024 / p")
 
    printf "\n  %-40s %10d, %6.2f MB\n" "Total size (bytes)" $totalsize $totalsizemb
    printf "+ %-40s %10d, %6.2f MB\n" "Indicates need to download" $totalsize_needed $totalsize_neededmb
