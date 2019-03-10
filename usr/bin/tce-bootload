@@ -196,15 +196,6 @@ for p in tczout:
 			os.system('sudo busybox.suid rm -r -f ' + root + '/tmp/tcloop/' + p[:-4])    
 		else:
 			os.system('sudo busybox cp -r -s ' + root + '/tmp/tcloop/' + p[:-4] + '/* ' + root + '/')
-
-		try:
-			fp = open(root + '/usr/local/tce.installed/' + p[:-4], 'r')
-			fp.close()
-			stlst.append(p[:-4])
-
-		except OSError:
-			fp = open(root + '/usr/local/tce.installed/' + p[:-4], 'wb')
-			fp.close()
 		sys.exit(0)
 	else:
 		if forks >= maxforks:
@@ -215,6 +206,16 @@ for p in tczout:
 for j in range(forks):
 	tmp=os.waitpid(0, 0)
 	forklog("PID:%d Finished, exit code: %d" % tmp)
+
+# Scan for extension load scripts. Separated from above, since the forked processes can't update variable.
+for p in tczout:
+	try:
+		fp = open(root + '/usr/local/tce.installed/' + p[:-4], 'r')
+		fp.close()
+		stlst.append(p[:-4])
+	except OSError:
+		fp = open(root + '/usr/local/tce.installed/' + p[:-4], 'wb')
+		fp.close()
 
 waitforfinish()
 
