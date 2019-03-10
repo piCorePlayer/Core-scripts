@@ -6,7 +6,7 @@ import utime
 
 import tc
 
-maxforks = tc.cpunr * 2
+maxforks = tc.cpunr
 
 def waitforfinish():
 	while len(os.listdir('/var/run/tcebootload')) != 0:
@@ -36,6 +36,7 @@ tczin = []
 
 
 showapps = 'showapps' in tc.cmdline
+debug = 'debugbootload' in tc.cmdline
 
 tm = utime.time()
 
@@ -103,7 +104,8 @@ for p in tczout:
 	try:
 		pid = os.fork()
 		if pid != 0:
-			forklog("PID:%d Started" % pid)
+			if debug:
+				forklog("PID:%d Started" % pid)
 			forks += 1
 			f = forks
 	except OSError:
@@ -137,12 +139,14 @@ for p in tczout:
 	else:
 		if forks >= maxforks:
 			tmp=os.waitpid(0, 0)
-			forklog("PID:%d Finished, exit code: %d" % tmp)
+			if debug:
+				forklog("PID:%d Finished, exit code: %d" % tmp)
 			forks -= 1
 
 for j in range(forks):
 	tmp=os.waitpid(0, 0)
-	forklog("PID:%d Finished, exit code: %d" % tmp)
+	if debug:
+		forklog("PID:%d Finished, exit code: %d" % tmp)
 
 waitforfinish()
 
@@ -172,7 +176,8 @@ for p in tczout:
 	try:
 		pid = os.fork()
 		if pid != 0:
-			forklog("PID:%d Started" % pid)
+			if debug:
+				forklog("PID:%d Started" % pid)
 			forks += 1
 			f = forks
 	except OSError:
@@ -200,12 +205,14 @@ for p in tczout:
 	else:
 		if forks >= maxforks:
 			tmp=os.waitpid(0, 0)
-			forklog("PID:%d Finished, exit code: %d" % tmp)
+			if debug:
+				forklog("PID:%d Finished, exit code: %d" % tmp)
 			forks -= 1
 
 for j in range(forks):
 	tmp=os.waitpid(0, 0)
-	forklog("PID:%d Finished, exit code: %d" % tmp)
+	if debug:
+		forklog("PID:%d Finished, exit code: %d" % tmp)
 
 # Scan for extension load scripts. Separated from above, since the forked processes can't update variable.
 for p in tczout:
@@ -224,7 +231,8 @@ mklog('Add to file system')
 try:
 	pid = os.fork()
 	if pid != 0:
-		forklog("PID:%d Started" % pid)
+		if debug:
+			forklog("PID:%d Started" % pid)
 except OSError:
 	print("Error Forking")
 	st = os.system('sudo /sbin/ldconfig')
@@ -235,7 +243,8 @@ if pid == 0:
 try:
 	pid = os.fork()
 	if pid != 0:
-		forklog("PID:%d Started" % pid)
+		if debug:
+			forklog("PID:%d Started" % pid)
 except OSError:
 	print("Error Forking")
 	st = os.system('sudo /sbin/depmod -b /')
@@ -245,9 +254,11 @@ if pid == 0:
 
 #Wait for previous 2 forks to finish.
 tmp=os.waitpid(0, 0)
-forklog("PID:%d Finished, exit code: %d" % tmp)
+if debug:
+	forklog("PID:%d Finished, exit code: %d" % tmp)
 tmp=os.waitpid(0, 0)
-forklog("PID:%d Finished, exit code: %d" % tmp)
+if debug:
+	forklog("PID:%d Finished, exit code: %d" % tmp)
 
 # Executing startup scripts
 
@@ -264,7 +275,8 @@ for p in stlst:
 	try:
 		pid = os.fork()
 		if pid != 0:
-			forklog("PID:%d Started" % pid)
+			if debug:
+				forklog("PID:%d Started" % pid)
 			forks += 1
 			f = forks
 	except OSError:
@@ -280,12 +292,14 @@ for p in stlst:
 	else:
 		if forks >= maxforks:
 			tmp=os.waitpid(0, 0)
-			forklog("PID:%d Finished, exit code: %d" % tmp)
+			if debug:
+				forklog("PID:%d Finished, exit code: %d" % tmp)
 			forks -= 1
 
 for j in range(forks):
 	tmp=os.waitpid(0, 0)
-	forklog("PID:%d Finished, exit code: %d" % tmp)
+	if debug:
+		forklog("PID:%d Finished, exit code: %d" % tmp)
 
 mklog('Execute startup scripts')
 
