@@ -341,6 +341,9 @@ if [ -n "$PRETCE" ]; then
 	[ -x /tmp/onpre.sh ] && /tmp/onpre.sh
 fi
 
+#Set fq_codel as the defaul network scheduler
+echo "fq_codel" > /proc/sys/net/core/default_qdisc
+
 # First process tftp and http entries
 modprobe -q squashfs 2>/dev/null
 [ -n "$TFTPLIST" ] && get_app "TFTP" $TFTPLIST
