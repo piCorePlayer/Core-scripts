@@ -88,6 +88,7 @@ for i in `cat /proc/cmdline`; do
 				norestore) NORESTORE=1 ;;
 				noautologin) NOAUTOLOGIN=1 ;;
 				pause) PAUSE=1 ;;
+				forcefsck) FORCE_FSCK=1 ;;
 			esac
 		;;
 	esac
@@ -129,6 +130,21 @@ echo "${GREEN} Done.${NORMAL}"
 		*) sleep "$WAITUSB" ;;
 	esac
 )
+
+[ -n "$FORCE_FSCK" ] && (
+	DONE=0
+	echo "${BLUE}Forcing checking of root filesystems...${NORMAL}"
+	ALLPARTS=$(fdisk -l | awk '$1 ~ /dev/{printf "%s\n",$1}')
+	for DISK in $ALLPARTS; do
+		if [ "$(blkid $DISK -s LABEL| awk -F"LABEL=" '{print $NF}' | tr -d "\"")" = "PCP_ROOT" ]; then
+			echo "RootFS found at $DISK"
+			/usr/sbin/e2fsck -f -y $DISK
+			DONE=1
+			break
+		fi
+	done
+	[ $DONE -eq 1 ] && echo "${GREEN} Done.${NORMAL}" || echo "${RED}Error, RootFS not detected."
+) | tee -a /var/log/pcp_rootfsck.log
 
 modprobe loop 2>/dev/null
 #modprobe ohci_hcd
