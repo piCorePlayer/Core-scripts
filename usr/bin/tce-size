@@ -15,6 +15,7 @@ get_dependencies()
 {
 
 for F in `sed 's/ //g' "$app".tree | sort -f | uniq`; do
+      F=$(echo $F | sed "s/KERNEL/$(uname -r)/")
       size=`grep -w "^$F" sizelist  | awk '{print $2}'`
       case $size in
       [0-9]*)
