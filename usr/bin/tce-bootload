@@ -105,7 +105,7 @@ for p in tczout:
 		pid = os.fork()
 		if pid != 0:
 			if debug:
-				forklog("PID:%d Started" % pid)
+				forklog("PID:%d Started for %s" % (pid, p))
 			forks += 1
 			f = forks
 	except OSError:
@@ -177,7 +177,7 @@ for p in tczout:
 		pid = os.fork()
 		if pid != 0:
 			if debug:
-				forklog("PID:%d Started" % pid)
+				forklog("PID:%d Started for %s" % (pid, p))
 			forks += 1
 			f = forks
 	except OSError:
@@ -198,9 +198,9 @@ for p in tczout:
 		if copy2fsflg:
 			os.system('sudo busybox cp -r ' + root + '/tmp/tcloop/' + p[:-4] + '/* /')
 			os.system('sudo busybox.suid umount ' + root + '/tmp/tcloop/' + p[:-4])
-			os.system('sudo busybox.suid rm -r -f ' + root + '/tmp/tcloop/' + p[:-4])    
+			os.system('sudo busybox rm -r -f ' + root + '/tmp/tcloop/' + p[:-4])    
 		else:
-			os.system('sudo busybox cp -r -s ' + root + '/tmp/tcloop/' + p[:-4] + '/* ' + root + '/')
+			os.system('sudo busybox cp -r -f -s ' + root + '/tmp/tcloop/' + p[:-4] + '/* ' + root + '/')
 		sys.exit(0)
 	else:
 		if forks >= maxforks:
@@ -276,7 +276,7 @@ for p in stlst:
 		pid = os.fork()
 		if pid != 0:
 			if debug:
-				forklog("PID:%d Started" % pid)
+				forklog("PID:%d Started for %s" % (pid, p))
 			forks += 1
 			f = forks
 	except OSError:
