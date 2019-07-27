@@ -1,10 +1,10 @@
 NAME=piCorePlayer
-VERSION="5.0.0"
+VERSION="6.0.0"
 ID=picore
 VERSION_ID=10.0
-PRETTY_NAME="piCorePlayer 5.0.0"
+PRETTY_NAME="piCorePlayer 6.0.0"
 ANSI_COLOR="0;34"
 CPE_NAME="cpe:/o:tinycore:tinycore_linux:10.0"
 HOME_URL="https://www.picoreplyer.org/"
-SUPPORT_URL="https://www.picoreplyer.org/announce.5.0.0"
-BUG_REPORT_URL="https://www.picoreplyer.org/announce.5.0.0"
+SUPPORT_URL="https://www.picoreplyer.org/announce.6.0.0"
+BUG_REPORT_URL="https://www.picoreplyer.org/announce.6.0.0"
