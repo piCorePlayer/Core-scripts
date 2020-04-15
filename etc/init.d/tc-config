@@ -151,9 +151,6 @@ modprobe loop 2>/dev/null
 if [ -n "$NOZSWAP" ]; then
 	echo "${BLUE}Skipping compressed swap in ram as requested from the boot command line.${NORMAL}"
 else
-	modprobe -q zram
-	modprobe -q zcache
-
 	while [ ! -e /dev/zram0 ]; do usleep 50000; done
 
 	echo lz4 > /sys/block/zram0/comp_algorithm
