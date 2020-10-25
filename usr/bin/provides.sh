@@ -9,6 +9,8 @@ TCEDIR="/etc/sysconfig/tcedir"
 DB="provides.db"
 
 getMirror
+# zsync does not support https, hopefully server supports both.
+MIRROR=$(echo $MIRROR | sed 's/https/http/')
 cd "$TCEDIR"
 if zsync -i "$TCEDIR"/"$DB" -q "$MIRROR"/"$DB".zsync
 then
