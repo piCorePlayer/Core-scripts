@@ -123,7 +123,7 @@ for p in tczout:
 	pid = os.fork()
 	if pid != 0:
 		if debug:
-			forklog("PID:%d Started for %s" % (pid, p))
+			forklog("PID:%d Started for mounting %s" % (pid, p))
 		forks += 1
 		f = forks
 
@@ -183,7 +183,7 @@ for p in tczout:
 	pid = os.fork()
 	if pid != 0:
 		if debug:
-			forklog("PID:%d Started for %s" % (pid, p))
+			forklog("PID:%d Started for copying %s" % (pid, p))
 		forks += 1
 		f = forks
 
@@ -203,7 +203,9 @@ for p in tczout:
 			os.system('sudo busybox.suid umount ' + root + '/tmp/tcloop/' + p[:-4])
 			os.system('sudo busybox rm -r -f ' + root + '/tmp/tcloop/' + p[:-4])
 		else:
-			os.system('sudo busybox cp -r -f -s ' + root + '/tmp/tcloop/' + p[:-4] + '/* ' + root + '/')
+			ret = os.system('sudo busybox cp -r -f -s ' + root + '/tmp/tcloop/' + p[:-4] + '/* ' + root + '/')
+			if debug:
+				forklog("busybox cp %s code: %d" % (p, ret))
 		sys.exit(0)
 	else:
 		if forks >= maxforks:
