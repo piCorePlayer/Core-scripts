@@ -28,7 +28,7 @@ def forklog(s):
 	fp.write("%s\n" % s)
 	fp.close()
 
-def mount_extension(cmd,ext):
+def system_command(cmd,ext):
 	retries=4
 	while retries > 0:
 		try:
@@ -136,7 +136,7 @@ for p in tczout:
 			fp = open(sys.argv[1] + '/optional/' + p, 'r')
 			fp.close()
 			os.mkdir(root + '/tmp/tcloop/' + p[:-4])
-			mount_extension('sudo /usr/bin/mount -t squashfs -o loop ' + sys.argv[1] + '/optional/' + p + ' ' + root + '/tmp/tcloop/' + p[:-4], p[:4])
+			system_command('sudo /usr/bin/mount -t squashfs -o loop ' + sys.argv[1] + '/optional/' + p + ' ' + root + '/tmp/tcloop/' + p[:-4], p[:4])
 		except OSError:
 			if showapps:
 				print("\nExtension already loaded:", p)
@@ -199,13 +199,11 @@ for p in tczout:
 			print(p[:-4] + ' ', end="")
 
 		if copy2fsflg:
-			os.system('sudo busybox cp -r ' + root + '/tmp/tcloop/' + p[:-4] + '/* /')
-			os.system('sudo busybox.suid umount ' + root + '/tmp/tcloop/' + p[:-4])
-			os.system('sudo busybox rm -r -f ' + root + '/tmp/tcloop/' + p[:-4])
+			system_command('sudo busybox cp -r ' + root + '/tmp/tcloop/' + p[:-4] + '/* /', p[:-4])
+			system_command('sudo busybox.suid umount ' + root + '/tmp/tcloop/' + p[:-4], p[:-4])
+			system_command('sudo busybox rm -r -f ' + root + '/tmp/tcloop/' + p[:-4], p[:-4])
 		else:
-			ret = os.system('sudo busybox cp -r -f -s ' + root + '/tmp/tcloop/' + p[:-4] + '/* ' + root + '/')
-			if debug:
-				forklog("busybox cp %s code: %d" % (p, ret))
+			system_command('sudo busybox cp -r -f -s ' + root + '/tmp/tcloop/' + p[:-4] + '/* ' + root + '/', p[:-4])
 		sys.exit(0)
 	else:
 		if forks >= maxforks:
@@ -281,7 +279,7 @@ for p in stlst:
 		if showapps:
 			print(p + ' ', end="")
 		if os.access( script, os.X_OK) == True:
-			os.system('sudo %s' % script)
+			system_command('sudo %s' % script, script)
 		sys.exit(0)
 	else:
 		if forks >= maxforks:
