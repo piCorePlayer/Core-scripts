@@ -26,6 +26,10 @@ cpio() {
     busybox cpio "$@"
 }
 
+date() {
+    busybox date "$@"
+}
+
 dc() {
     busybox dc "$@"
 }
@@ -75,6 +79,10 @@ killall() {
     busybox killall "$@"
 }
 
+less() {
+    busybox less "$@"
+}
+
 ls() {
     busybox ls "$@"
 }
@@ -87,6 +95,10 @@ md5sum() {
 #mount() {
 #    busybox.suid mount "$@"
 #}
+
+ps() {
+    busybox ps "$@"
+}
 
 sed() {
     busybox sed "$@"
@@ -110,6 +122,10 @@ sync() {
 
 tar() {
     busybox tar "$@"
+}
+
+timeout() {
+    busybox timeout "$@"
 }
 
 umount() {
