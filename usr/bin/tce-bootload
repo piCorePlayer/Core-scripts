@@ -34,17 +34,20 @@ def system_command(cmd,ext):
 		try:
 			ret=os.system(cmd)
 			if ret != 0:
-				forklog('OS Error code %s:%d\n' % (ext, ret))
+				if debug:
+					forklog('OS Error code %s:%d\n' % (ext, ret))
 				retries -= 1
 			else:
 				if (retries != 4):
-					forklog("Successful Retry on %s\n" % ext)
+					if debug:
+						forklog("Successful Retry on %s\n" % ext)
 				break
 		except OSError:
 			retries -= 1
 			continue
 	if (retries == 0):
-		forklog("\nToo many retries:", ext)
+		if debug:
+			forklog("\nToo many retries:", ext)
 
 
 root = ''
@@ -136,7 +139,7 @@ for p in tczout:
 			fp = open(sys.argv[1] + '/optional/' + p, 'r')
 			fp.close()
 			os.mkdir(root + '/tmp/tcloop/' + p[:-4])
-			system_command('sudo /usr/bin/mount -t squashfs -o loop ' + sys.argv[1] + '/optional/' + p + ' ' + root + '/tmp/tcloop/' + p[:-4], p[:4])
+			system_command('sudo /usr/bin/mount -t squashfs -o loop ' + sys.argv[1] + '/optional/' + p + ' ' + root + '/tmp/tcloop/' + p[:-4], p[:-4])
 		except OSError:
 			if showapps:
 				print("\nExtension already loaded:", p)
