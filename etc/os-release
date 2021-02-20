@@ -1,0 +1,10 @@
+NAME=piCorePlayer
+VERSION="13.0"
+ID=pCP
+VERSION_ID=13.0
+PRETTY_NAME="piCOrePlayer 13.0"
+ANSI_COLOR="0;34"
+CPE_NAME="cpe:/o:picore:picore_linux:13.0"
+HOME_URL="https://picoreplayer.org/"
+SUPPORT_URL="https://picoreplayer.org/announce.8.0.0"
+BUG_REPORT_URL="https://picoreplayer.org/announce.8.0.0"
