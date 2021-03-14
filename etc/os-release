@@ -1,8 +1,8 @@
 NAME=piCorePlayer
-VERSION="13.0"
+VERSION="8.0.0"
 ID=pCP
 VERSION_ID=13.0
-PRETTY_NAME="piCorePlayer 13.0"
+PRETTY_NAME="piCorePlayer 8.0.0"
 ANSI_COLOR="0;34"
 CPE_NAME="cpe:/o:picore:picore_linux:13.0"
 HOME_URL="https://picoreplayer.org/"
