@@ -80,7 +80,7 @@ fetch_app() {
 }
 
 make_loop() {
-	LOOP=$(losetup -f | cut -d'p' -f2)
+	LOOP=$(sudo losetup -f | cut -d'p' -f2)
 	[ -e /dev/loop$LOOP ] || sudo mknod -m 660 /dev/loop$LOOP b 7 $LOOP
 }
 
