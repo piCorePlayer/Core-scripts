@@ -19,6 +19,27 @@ process_normal_tcedir() {
 			if [ "$MOUNTED" == "yes" ]; then
 				setupExtnDirs
 			else
+				FSCHECK=0
+				tunetmp=$(mktemp)
+				tune2fs -l /dev/$TCE_DEVICE > $tunetmp
+				STATE=$(cat $tunetmp | grep "Filesystem state:" | cut -d':' -f2 | xargs echo)
+				CURNUMMOUNT=$(cat $tunetmp | grep "Mount count:" | cut -d':' -f2 | xargs echo)
+				MAXMOUNTCNT=$(cat $tunetmp | grep "Maximum mount count:" | cut -d':' -f2 | xargs echo)
+				rm -f $tunetmp
+				if [ "$STATE" != "clean" ]; then
+					echo "${YELLOW}Filesystem ${RED}/dev/$TCE_DEVICE ${GREEN}is not clean, performing filesystem check.${NORMAL}" 1>&2
+					FSCHECK=1
+				fi
+				if [ "$MAXMOUNTCNT" != "-1" ]; then
+					if [ $CURNUMMOUNT -gt $MAXMOUNTCNT ]; then
+						echo "${GREEN}Filesystem ${YELLOW}/dev/$TCE_DEVICE${GREEN} has exceeded number of mounts between checks.${NORMAL}" 1>&2
+						FSCHECK=1
+					fi
+				fi
+				if [ $FSCHECK -eq 1 ]; then
+					e2fsck -f -y /dev/$TCE_DEVICE 1>&2
+					echo "${YELLOW}Done${NORMAL}" 1>&2
+				fi
 				mount "$MOUNTPOINT"
 				if [ $? == 0 ]; then
 					UMOUNT="yes"
@@ -47,9 +68,9 @@ process_normal_tcedir() {
 	fi
 
 	if [ -d "$TCEDIR"/optional/upgrade ] && [ "$(ls -A "$TCEDIR"/optional/upgrade 2>/dev/null)" ]; then
-		echo -n "${GREEN}Performing upgrade from $TCEDIR/optional/upgrade. ${NORMAL}"
+		echo -n "${GREEN}Performing upgrade from $TCEDIR/optional/upgrade. ${NORMAL}" 1>&2
 		yes y | cp -ai "$TCEDIR"/optional/upgrade/* "$TCEDIR"/optional/. 2>/dev/null && rm -rf "$TCEDIR"/optional/upgrade
-		echo "${YELLOW}Done.${NORMAL}"
+		echo "${YELLOW}Done.${NORMAL}" 1>&2
 	fi
 #	Process regular extensions
 	ONBOOT="$TCEDIR"/"$TARGETLIST"

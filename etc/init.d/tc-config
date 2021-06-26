@@ -141,7 +141,7 @@ echo "${GREEN} Done.${NORMAL}"
 	for DISK in $ALLPARTS; do
 		if [ "$(blkid $DISK -s LABEL| awk -F"LABEL=" '{print $NF}' | tr -d "\"")" = "PCP_ROOT" ]; then
 			echo "RootFS found at $DISK"
-			/usr/sbin/e2fsck -f -y $DISK
+			e2fsck -f -y $DISK
 			DONE=1
 			break
 		fi
@@ -582,7 +582,7 @@ if [ -n "$SHOWAPPS" ]; then
 	echo "${GREEN} Done.${NORMAL}"
 else
 	echo -n "$MSSG"
-	/usr/bin/tce-setup "booting" > /dev/null 2>&1 & 
+	/usr/bin/tce-setup "booting" >/dev/null & 
 	rotdash $!
 	[ -n "$ISOFILE" ] && /usr/bin/fromISOfile "$ISOFILE" > /dev/null 2>&1 &
 	rotdash $!
