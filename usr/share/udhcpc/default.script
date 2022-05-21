@@ -34,6 +34,15 @@ case "$1" in
 			echo adding dns $i
 			echo nameserver $i >> $RESOLV_CONF
 		done
+		if [ -n "$ntpsrv" ]; then
+			cat /proc/cmdline | grep -q ntpserver
+			if [ $? -eq 0 ]; then
+				echo "cmdline overriding dhcp ntpserver setting"
+			else
+				echo "adding ntpserver"
+				echo $ntpsrv > /etc/sysconfig/ntpserver
+			fi
+		fi
 		;;
 esac
 
