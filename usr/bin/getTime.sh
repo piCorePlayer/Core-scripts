@@ -1,5 +1,5 @@
 #!/bin/busybox ash
 # bmarkus - 26/02/2014
 
-NTPSERVER=$(cat /etc/sysconfig/ntpserver)
-/usr/sbin/ntpd -q -p $NTPSERVER
+[ -f /etc/sysconfig/ntpserver ] && NTPOPTS="-p $(cat /etc/sysconfig/ntpserver)" || NTPOPTS=""
+/usr/sbin/ntpd -q $NTPOPTS
