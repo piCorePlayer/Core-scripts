@@ -9,6 +9,37 @@ read USER < /etc/sysconfig/tcuser
 TCEINSTALLED="/usr/local/tce.installed"
 
 process_normal_tcedir() {
+	for DEVICE in `autoscan-devices`; do
+		echo "DEVICE=$DEVICE"
+		FSCHECK=0
+		tunetmp=$(mktemp)
+		tune2fs -l /dev/$DEVICE > $tunetmp 2>/dev/null
+		if [ $? -eq 0 ]; then
+			STATE=$(cat $tunetmp | grep "Filesystem state:" | cut -d':' -f2 | xargs echo)
+			CURNUMMOUNT=$(cat $tunetmp | grep "Mount count:" | cut -d':' -f2 | xargs echo)
+			MAXMOUNTCNT=$(cat $tunetmp | grep "Maximum mount count:" | cut -d':' -f2 | xargs echo)
+		else
+			# If its not a ext3/4 filesystem, then this doesn't apply
+			STATE="clean"
+			MAXMOUNTCNT=-1
+		fi
+		rm -f $tunetmp
+		if [ "$STATE" != "clean" ]; then
+			echo "${YELLOW}Filesystem ${RED}/dev/$TCE_DEVICE ${GREEN}is not clean, performing filesystem check.${NORMAL}" 1>&2
+			FSCHECK=1
+		fi
+		if [ "$MAXMOUNTCNT" != "-1" ]; then
+			if [ $CURNUMMOUNT -gt $MAXMOUNTCNT ]; then
+				echo "${GREEN}Filesystem ${YELLOW}/dev/$TCE_DEVICE${GREEN} has exceeded number of mounts between checks.${NORMAL}" 1>&2
+				FSCHECK=1
+			fi
+		fi
+		if [ $FSCHECK -eq 1 ]; then
+			e2fsck -f -y /dev/$TCE_DEVICE 1>&2
+			echo "${YELLOW}Done${NORMAL}" 1>&2
+		fi
+	done
+
 	[ -z "$TCE" ] && TCE="$(tc_autoscan 'tce' 'd')"/tce
 	if [ "$TCE" != "/tce" ]; then
 		TCE_DEVICE="${TCE%%/*}"
@@ -19,27 +50,6 @@ process_normal_tcedir() {
 			if [ "$MOUNTED" == "yes" ]; then
 				setupExtnDirs
 			else
-				FSCHECK=0
-				tunetmp=$(mktemp)
-				tune2fs -l /dev/$TCE_DEVICE > $tunetmp
-				STATE=$(cat $tunetmp | grep "Filesystem state:" | cut -d':' -f2 | xargs echo)
-				CURNUMMOUNT=$(cat $tunetmp | grep "Mount count:" | cut -d':' -f2 | xargs echo)
-				MAXMOUNTCNT=$(cat $tunetmp | grep "Maximum mount count:" | cut -d':' -f2 | xargs echo)
-				rm -f $tunetmp
-				if [ "$STATE" != "clean" ]; then
-					echo "${YELLOW}Filesystem ${RED}/dev/$TCE_DEVICE ${GREEN}is not clean, performing filesystem check.${NORMAL}" 1>&2
-					FSCHECK=1
-				fi
-				if [ "$MAXMOUNTCNT" != "-1" ]; then
-					if [ $CURNUMMOUNT -gt $MAXMOUNTCNT ]; then
-						echo "${GREEN}Filesystem ${YELLOW}/dev/$TCE_DEVICE${GREEN} has exceeded number of mounts between checks.${NORMAL}" 1>&2
-						FSCHECK=1
-					fi
-				fi
-				if [ $FSCHECK -eq 1 ]; then
-					e2fsck -f -y /dev/$TCE_DEVICE 1>&2
-					echo "${YELLOW}Done${NORMAL}" 1>&2
-				fi
 				mount "$MOUNTPOINT"
 				if [ $? == 0 ]; then
 					UMOUNT="yes"
