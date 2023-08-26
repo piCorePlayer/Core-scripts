@@ -2,7 +2,7 @@
 [ -f /proc/cmdline ] || /bin/mount /proc
 CMDLINE=""; CMDLINE=" $(cat /proc/cmdline)"
 
-tty -s
+/bin/istty
 if [ $? -eq 0 ]; then
  # ANSI COLORS
  CRE="$(echo -e '\r\033[K')"
