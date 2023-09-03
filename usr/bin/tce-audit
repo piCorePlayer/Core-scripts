@@ -45,7 +45,7 @@ updatedeps(){
 		TARGET="${TARGET/-KERNEL/-${KERNELVER}}"
 		echo -n "."
 		[ -f /tmp/"$TARGET" ] && rm -f /tmp/"$TARGET"
-		wget -cq -P /tmp "$MIRROR"/"$TARGET" 2>/tmp/fetch_result
+		pcpget -cq -P /tmp "$MIRROR"/"$TARGET" 2>/tmp/fetch_result
 		if [ "$?" == 0 ]; then
 			mv /tmp/"$TARGET" "$TCEDIR"/.
 		else

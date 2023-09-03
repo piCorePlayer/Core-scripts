@@ -18,7 +18,7 @@ then
 else
 	if [ ! -f "$TCEDIR"/"$DB" ]
 	then
-	  wget -O "$TCEDIR"/"$DB".gz "$MIRROR"/"$DB".gz
+	  pcpget -O "$TCEDIR"/"$DB".gz "$MIRROR"/"$DB".gz
 	  gunzip "$TCEDIR"/"$DB".gz
 	fi
 fi

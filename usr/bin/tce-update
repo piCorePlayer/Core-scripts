@@ -15,14 +15,14 @@ dep_vars(){
 
 fetch(){
 	[ -f "$1" ] && rm -f "$1"
-	wget -cq "$MIRROR"/"$1"
+	pcpget -cq "$MIRROR"/"$1"
 }
 fetchzsync(){
 	[ -f "$1" ] && rm -f "$1"
 	if zsync -i "$UPGRADE_DIR"/"$1" -q "$MIRROR"/"$1".zsync; then
 		rm -f "$1".zs-old
 	else
-		wget -cq "$MIRROR"/"$1" # Either there was no zsync file on the server, or it failed
+		pcpget -cq "$MIRROR"/"$1" # Either there was no zsync file on the server, or it failed
 	fi
 }
 

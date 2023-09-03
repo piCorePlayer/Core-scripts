@@ -37,7 +37,7 @@ get_depdb()
 	cd "$DEPDIR"
 	. /etc/init.d/tc-functions
 	getMirror
-	wget -q "$MIRROR"/"$DBGZ"
+	pcpget -q "$MIRROR"/"$DBGZ"
 	gunzip -kf "$DBGZ"
 }
 

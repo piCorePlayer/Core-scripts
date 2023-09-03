@@ -49,7 +49,7 @@ fi
 if [ ! -f "$DBGZ" ]
 then
         getMirror
-        wget -q -O "$TCEDIR"/"$DBGZ" "$MIRROR"/"$DBGZ"
+        pcpget -q -O "$TCEDIR"/"$DBGZ" "$MIRROR"/"$DBGZ"
         # Make sure it has a current timestamp.
         touch "$DBGZ"
 fi

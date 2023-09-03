@@ -70,8 +70,8 @@ app_exists() {
 
 fetch_app() {
 	echo "Downloading: $1"
-	wget -cq "$MIRROR"/"$1".md5.txt 2>/dev/null
-	wget -c "$MIRROR"/"$1"
+	pcpget -cq "$MIRROR"/"$1".md5.txt 2>/dev/null
+	pcpget -c "$MIRROR"/"$1"
 	md5sum -c "$1".md5.txt
 	if [ "$?" != 0 ]; then
 		echo "Error on $1"
@@ -185,7 +185,7 @@ recursive_scan_dep() {
 				IRANGE[name"#1"]=IDX
 				depfile=optional"/"name".dep"
 				if (mirror && (system("test ! -f "depfile) == 0 || system("test ! -f "optional"/"name) == 0))
-					if (system("rm -f "depfile"; wget -c -P "optional" "mirror"/"name".dep 2>/dev/null") == 0 && ! SUPPRESS)
+					if (system("rm -f "depfile"; pcpget -c -P "optional" "mirror"/"name".dep 2>/dev/null") == 0 && ! SUPPRESS)
 						system("echo "name".dep OK 1>&2")
 				MARK[name]=2
 				if (mirror || system("test -f "optional"/"name) == 0) {
