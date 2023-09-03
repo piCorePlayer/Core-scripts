@@ -35,7 +35,7 @@ process_normal_tcedir() {
 			fi
 		fi
 		if [ $FSCHECK -eq 1 ]; then
-			e2fsck -f -y /dev/$TCE_DEVICE 1>&2
+			e2fsck -f -y /dev/$DEVICE 1>&2
 			echo "${YELLOW}Done${NORMAL}" 1>&2
 		fi
 	done
