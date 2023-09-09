@@ -7,7 +7,7 @@
 # Purpose: Do a full TCL system update as quickly and efficiently as possible, leaving custom extensions intact 
 # Usage: $ update-everything
 
-PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin"
 export PATH
 
 main()

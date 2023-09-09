@@ -248,7 +248,7 @@ if [ "$TCE_DEVICE" != "nfs" ] ; then
 	fi
 	USED_SPACE=`du -sk "$TCEDIR" | awk '{print $1}'`
 	FREE_SPACE=`df /dev/"$TCE_DEVICE" | awk '/'"$TCE_DEVICE"'/{ print $4}'`
-	NEED_SPACE=`expr "$USED_SPACE" \* 2`
+	NEED_SPACE=`echo "$USED_SPACE" | awk '{print $1 * 1.5}'`
 	EASY_MODE=`expr $NEED_SPACE \< "$FREE_SPACE"`
 else
 	EASY_MODE=1
