@@ -116,7 +116,7 @@ update_system() {
 			sudo "$TCEINSTALLED"/$2
 		fi
 	else
-		touch "$TCEINSTALLED"/$2
+		sudo /bin/touch "$TCEINSTALLED"/$2
 	fi
 	#Verify proper ownership of tce.installed directory, some extensions can break it.
 	sudo chown root:staff "$TCEINSTALLED"
