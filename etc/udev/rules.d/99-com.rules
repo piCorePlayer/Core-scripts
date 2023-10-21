@@ -1,7 +1,7 @@
 SUBSYSTEM=="input", GROUP="staff", MODE="0660"
 SUBSYSTEM=="i2c-dev", GROUP="staff", MODE="0660"
 SUBSYSTEM=="spidev", GROUP="staff", MODE="0660"
-SUBSYSTEM=="bcm2835-gpiomem", GROUP="staff", MODE="0660"
+SUBSYSTEM=="gpiomem", GROUP="staff", MODE="0660"
 SUBSYSTEM=="rpivid-*", GROUP="staff", MODE="0660"
 
 KERNEL=="vcsm-cma", GROUP="staff", MODE="0660"
