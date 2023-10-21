@@ -328,10 +328,14 @@ BUILD=`uname -m`
 case ${BUILD} in
 	armv6l) echo "armv6" ;;
 	armv7l) echo "armv7" ;;
-	aarch64) echo "aarch64" ;;
-	i686)   echo "x86" ;;
-	x86_64) [ -f /lib/ld-linux-x86-64.so.2 ] && echo "x86_64" || echo "x86" ;;
-	*)      echo "x86" ;;
+	aarch64) 
+		if find /lib | grep ld-linux | grep -q armhf; then
+			echo "armv7"
+		else
+			echo "aarch64"
+		fi
+	;;
+	*) echo "armv7" ;;
 esac
 }
 
@@ -339,7 +343,6 @@ getMirror() {
 BUILD="$1"
 [ -z "$BUILD" ] && BUILD=$(getBuild)
 read MIRROR < /opt/tcemirror
-#MIRROR="${MIRROR%/}/$(getMajorVer).x/x86/tcz"
 MIRROR="${MIRROR%/}/$(getMajorVer).x/$BUILD/tcz"
 }
 
