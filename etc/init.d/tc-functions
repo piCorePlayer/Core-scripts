@@ -328,7 +328,7 @@ BUILD=`uname -m`
 case ${BUILD} in
 	armv6l) echo "armv6" ;;
 	armv7l) echo "armv7" ;;
-	aarch64) 
+	aarch64*) 
 		if find /lib | grep ld-linux | grep -q armhf; then
 			echo "armv7"
 		else
