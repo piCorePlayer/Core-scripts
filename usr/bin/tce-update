@@ -82,8 +82,8 @@ upgrade(){
 check_dependencies(){
 	[ -n "$SKIPDEPCHECK" ] && return
 #	echo "${BLUE}Checking dependencies:${NORMAL}"
-	DEPS="$(/bin/busybox find -L "$UPGRADE_DIR" -regex '.*\.tcz\.dep$' | sort)"
-	[ -f  $TCEDIR/tcz-black.lst ] && DEPS=$(echo $DEPS | grep -v -f $TCEDIR/tcz-black.lst)
+	[ -f  $TCEDIR/tcz-black.lst ] && BL_CMD="grep -v -f $TCEDIR/tcz-black.lst" || BL_CMD="echo"
+	DEPS="$(/bin/busybox find -L "$UPGRADE_DIR" -regex '.*\.tcz\.dep$' | sort | BL_CMD)"
 	for F in $DEPS; do
 		for TARGET in `cat "$F"`; do
 			if [ ! -f "$UPGRADE_DIR"/"$TARGET" ] && [ ! -f "$UPGRADE_DIR"/upgrade/"$TARGET" ]; then
@@ -162,14 +162,17 @@ fi
 }
 
 process_dir(){
+
 	if [ ! "$LIST" ]; then
 		echo -n "${BLUE}Checking Tiny Core Applications in ${YELLOW}"
 		echo "$UPGRADE_DIR${NORMAL}"
 		[ "$QUERY" ] && echo "${BLUE}The following extensions need to be updated!${NORMAL}"
 	fi
-	FILES="$(/bin/busybox find -L "$UPGRADE_DIR" -regex '.*\.tcz\.md5\.txt$' | sort)"
-	[ -f  $TCEDIR/tcz-black.lst ] && FILES="$(echo "$FILES" | grep -v -f $TCEDIR/tcz-black.lst)"
+
+	[ -f  $TCEDIR/tcz-black.lst ] && BL_CMD="grep -v -f $TCEDIR/tcz-black.lst" || BL_CMD="echo"
+	FILES="$(/bin/busybox find -L "$UPGRADE_DIR" -regex '.*\.tcz\.md5\.txt$' | sort | $BL_CMD)"
 	for F in $FILES; do
+		
 		if [ "$LIST" ]; then
 			chkMd5Only
 		else
