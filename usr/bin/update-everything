@@ -14,6 +14,7 @@ main()
 {
 	echo "Looking for changed .dep files..."
 	get_depdb
+	get_md5db
 	generate_dep_files
 	fix_missing_and_extraneous_dep_files
 	sync_dep_files
@@ -46,6 +47,18 @@ get_depdb()
 	fi
 }
 
+get_md5db()
+{
+	cd "$DEPDIR"
+	getMirror
+	pcpget -q "$MIRROR"/"$MD5GZ"
+	gunzip -kf "$MD5GZ"
+	if [ ! -f "$DEPDIR/$MD5DB" ]; then
+		echo "Error downloading md5 database...exiting"
+		exit 1
+	fi
+}
+
 generate_dep_files()
 {
 	awk 'BEGIN {FS="\n";RS=""} { out=$1".dep"; for (i=2; i<=NF; i++) printf("%s\n", $(i)) >out; close(out) }' dep.db
@@ -59,6 +72,7 @@ generate_dep_files()
 fix_missing_and_extraneous_dep_files()
 {
 	for md5file in $(find $OPTIONALDIR -name '*.md5.txt' -exec basename {} \;); do
+		grep -q " ${md5file%.md5.txt}" $MD5DB || continue
 		depfile="${md5file%.md5.txt}.dep"
 		if [ -f $DEPDIR/$depfile ] && [ ! -f $OPTIONALDIR/$depfile ]; then
 			echo "$depfile is missing, adding it..."
@@ -74,6 +88,7 @@ fix_missing_and_extraneous_dep_files()
 sync_dep_files()
 {
 	for md5file in $(find $OPTIONALDIR -name '*.md5.txt' -exec basename {} \;); do
+		grep -q " ${md5file%.md5.txt}" $MD5DB || continue
 		depfile="${md5file%.md5.txt}.dep"
 		if [ ! -f $OPTIONALDIR/$depfile ]; then # extension does not have a dep file
 			continue
@@ -94,5 +109,7 @@ DEPDIR="/tmp/depfiles"
 DB="dep.db"
 DBGZ="$DB.gz"
 DEP_FILES_UPDATED=false
+MD5DB="md5.db"
+MD5GZ="${MD5DB}.gz"
 
 main
