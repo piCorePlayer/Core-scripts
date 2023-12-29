@@ -1,13 +1,21 @@
 #!/bin/sh
 # (c) Robert Shingledecker 2012
 #     Bela Markus 2015
+#
+#     Modified for pCP
+#
 
-# Wait for network to come up and then set time
+# If user is using ntpd server, then skip this.
+
+[ -f /usr/local/etc/pcp/pcp.cfg ] && . /usr/local/etc/pcp/pcp.cfg
+[ "$NTPD" = "yes" ] && exit 0
+
+# Otherwise, wait up to 5min for network to come up and then set time
 
 CNT=0
 until ifconfig | grep -q Bcast
 do
-    [ $((CNT++)) -gt 60 ] && break || sleep 1
+    [ $((CNT++)) -gt 600 ] && break || sleep 1
 done
 
 if [ $CNT -le 60 ]
@@ -19,7 +27,7 @@ then
         XXX=$(/bin/date -I)
         XXX=${XXX:0:4}
 
-        if [ "$XXX" -ge "2018" ];
+        if [ "$XXX" -ge "2023" ];
         then
             break
         fi
