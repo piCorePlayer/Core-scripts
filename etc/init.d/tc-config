@@ -30,6 +30,11 @@ echo "${GREEN}Running Linux Kernel ${YELLOW}$KERNEL${GREEN}.${NORMAL}"
 export PATH=/usr/local/sbin:/usr/local/bin:"$PATH"
 
 echo -n performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+FSCKMODE="auto"
+FSCKREPAIR="preen"
+ARG_FORCE=0
+ARG_SKIP=0
+FSCK_FORCE=""
 
 # Here we check all the boot parameters using the fastest way known to men, case & loop
 echo -n "${BLUE}Checking boot options...${NORMAL}"
@@ -64,6 +69,8 @@ for i in `cat /proc/cmdline`; do
 				rsyslog=* ) RSYSLOG=${i#*=}; SYSLOG=1 ;;
 				blacklist* ) BLACKLIST="$BLACKLIST ${i#*=}" ;;
 				iso* ) ISOFILE=${i#*=} ;;
+				fsck.mode* ) FSCKMODE=${i#*=} ;;
+				fsck.repair*) FSCKREPAIR=${i#*=} ;;
 			esac
 		;;
 		*)
@@ -89,7 +96,7 @@ for i in `cat /proc/cmdline`; do
 				norestore) NORESTORE=1 ;;
 				noautologin) NOAUTOLOGIN=1 ;;
 				pause) PAUSE=1 ;;
-				forcefsck) FORCE_FSCK=1 ;;
+				forcefsck) FSCKMODE="force" ;;
 			esac
 		;;
 	esac
@@ -135,20 +142,64 @@ echo "${GREEN} Done.${NORMAL}"
 	esac
 )
 
-[ -n "$FORCE_FSCK" ] && (
-	DONE=0
-	echo "${BLUE}Forcing checking of root filesystems...${NORMAL}"
+case $FSCKMODE in
+	auto) break;;
+	force)
+		ARG_FORCE=1
+		FSCK_FORCE="-f"
+		break
+	;;
+	skip)
+		ARG_SKIP=1
+		break
+	;;
+	*)	echo "Invalid fsck.mode= parameter $FSCKMODE. Ignoring"
+		FSCKMODE="auto"
+		break
+	;;
+esac
+case $FSCKREPAIR in
+	preen)
+		ARG_REPAIR="-a"
+		break
+	;;
+	yes)
+		ARG_REPAIR="-y"
+		break
+	;;
+	no)
+		ARG_REPAIR="-n"
+		break
+	;;
+	*)
+		echo "Invalide fsck.repair= parameter $FSCKREPAIR. Ignoring"
+		FSCKREPAIR="preen"
+		ARG_REPAIR="-a"
+		break
+	;;
+esac
+
+if [ $ARG_SKIP -eq 0 ]; then
+	mkdir -p /var/log
+	if [ $ARG_FORCE -eq 1 ]; then
+		echo "${BLUE}Forced checking of filesystems as requested on cmdline...${YELLOW}"
+	else
+		echo "${BLUE}Automatic checking of filesystems...${YELLOW}"
+	fi
 	ALLPARTS=$(fdisk -l | awk '$1 ~ /dev/{printf "%s\n",$1}')
-	for DISK in $ALLPARTS; do
-		if [ "$(blkid $DISK -s LABEL| awk -F"LABEL=" '{print $NF}' | tr -d "\"")" = "PCP_ROOT" ]; then
-			echo "RootFS found at $DISK"
-			e2fsck -f -y $DISK
-			DONE=1
-			break
+	for DEVICE in $ALLPARTS; do
+		FSTYPE="$(blkid $DEVICE -s TYPE| awk -F"TYPE=" '{print $NF}' | xargs echo)"
+		if [ "${FSTYPE%%?}" = "ext" ]; then
+			echo "e2fsck $ARG_REPAIR $FSCK_FORCE $DEVICE" >> /var/log/pcp_fsck.log
+			e2fsck $ARG_REPAIR $FSCK_FORCE $DEVICE 2>&1| tee -a /var/log/pcp_fsck.log
+		else
+			echo "$DEVICE: $FSTYPE not supported at boot" >> /var/log/pcp_fsck.log
 		fi
 	done
-	[ $DONE -eq 1 ] && echo "${GREEN} Done.${NORMAL}" || echo "${RED}Error, RootFS not detected."
-) | tee -a /var/log/pcp_rootfsck.log
+	echo "${GREEN}Done.${NORMAL}"
+else
+	echo "${BLUE}Skipping filesystems check as requested on cmdline...${NORMAL}"
+fi
 
 modprobe loop 2>/dev/null
 #modprobe ohci_hcd
