@@ -1,10 +1,10 @@
 NAME=piCorePlayer
-VERSION="9.0.0"
+VERSION="10.0.0"
 ID=pCP
-VERSION_ID=14.0
-PRETTY_NAME="piCorePlayer 9.0.0"
+VERSION_ID=15.0
+PRETTY_NAME="piCorePlayer 10.0.0"
 ANSI_COLOR="0;34"
-CPE_NAME="cpe:/o:picore:picore_linux:14.0"
+CPE_NAME="cpe:/o:picore:picore_linux:15.0"
 HOME_URL="https://picoreplayer.org/"
-SUPPORT_URL="https://picoreplayer.org/announce.9.0.0"
-BUG_REPORT_URL="https://picoreplayer.org/announce.9.0.0"
+SUPPORT_URL="https://picoreplayer.org/announce.10.0.0"
+BUG_REPORT_URL="https://picoreplayer.org/announce.10.0.0"
