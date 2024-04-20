@@ -324,19 +324,11 @@ echo ${fullver%.*}
 }
 
 getBuild() {
-BUILD=`uname -m`
-case ${BUILD} in
-	armv6l) echo "armv6" ;;
-	armv7l) echo "armv7" ;;
-	aarch64*) 
-		if find /lib | grep ld-linux | grep -q armhf; then
-			echo "armv7"
-		else
-			echo "aarch64"
-		fi
-	;;
-	*) echo "armv7" ;;
-esac
+  case $(find /lib | grep ld-linux) in
+    *armhf*) echo "armhf";;
+    *aarch64*) echo "aarch64";;
+    *) echo "armhf";;
+  esac
 }
 
 getMirror() {
