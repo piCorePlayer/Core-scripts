@@ -83,7 +83,7 @@ check_dependencies(){
 	[ -n "$SKIPDEPCHECK" ] && return
 #	echo "${BLUE}Checking dependencies:${NORMAL}"
 	[ -f  $TCEDIR/tcz-black.lst ] && BL_CMD="grep -v -f $TCEDIR/tcz-black.lst" || BL_CMD="echo"
-	DEPS="$(/bin/busybox find -L "$UPGRADE_DIR" -regex '.*\.tcz\.dep$' | sort | BL_CMD)"
+	DEPS="$(/bin/busybox find -L "$UPGRADE_DIR" -regex '.*\.tcz\.dep$' | sort | $BL_CMD)"
 	for F in $DEPS; do
 		for TARGET in `cat "$F"`; do
 			if [ ! -f "$UPGRADE_DIR"/"$TARGET" ] && [ ! -f "$UPGRADE_DIR"/upgrade/"$TARGET" ]; then
@@ -242,6 +242,10 @@ TCE="${TCE#/mnt/}"
 TCE_DEVICE="${TCE%%/*}"
 TCE_DIR="${TCE#*/}"
 TCEDIR=/mnt/"$TCE_DEVICE"/"$TCE_DIR"
+
+# Make sure no blank lines
+[ -f  $TCEDIR/tcz-black.lst ] && sed -i -r '/^\s*$/d' $TCEDIR/tcz-black.lst
+
 if [ "$TCE_DEVICE" != "nfs" ] ; then
 	mount /mnt/"$TCE_DEVICE" 2> /dev/null
 	if [ "$?" == 1 ]; then
@@ -267,7 +271,7 @@ if [ "$EASY_MODE" == 1 ]; then
 else
 	echo; echo
 	echo "${YELLOW}Unfortunately there is not enough free disk space for easy mode."
-	echo "${BLUE}You can still proceed with in-place extension update.i${NORMAL}"
+	echo "${BLUE}You can still proceed with in-place extension update.${NORMAL}"
 	echo
 	UPGRADE_DIR="$TCEDIR"
 	check_bootoptions
