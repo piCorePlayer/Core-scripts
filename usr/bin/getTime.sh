@@ -1,5 +1,11 @@
 #!/bin/busybox ash
 # bmarkus - 26/02/2014
 
-[ -f /etc/sysconfig/ntpserver ] && NTPOPTS="-p $(cat /etc/sysconfig/ntpserver)" || NTPOPTS=""
-/usr/sbin/ntpd -q $NTPOPTS
+NTPOPTS=""
+if [ -f /etc/sysconfig/ntpserver ]; then
+    for IP in $(cat /etc/sysconfig/ntpserver); do
+        NTPOPTS="${NTPOPTS} -p ${IP}"
+    done
+fi
+
+/usr/sbin/ntpd -q ${NTPOPTS}
