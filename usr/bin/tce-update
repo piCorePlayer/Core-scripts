@@ -7,7 +7,8 @@ useBusybox
 
 KERNELVER=$(uname -r)
 getMirror
-case $MIRROR in http*) [ -n "`which zsync`" ] && USEZSYNC=yes ;; esac
+#case $MIRROR in http*) [ -n "`which zsync`" ] && USEZSYNC=yes ;; esac
+unset USEZSYNC
 
 dep_vars(){
 	sed -i "s@KERNEL@$KERNELVER@" $1
