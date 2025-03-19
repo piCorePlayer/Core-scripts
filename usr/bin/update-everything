@@ -40,20 +40,11 @@ get_depdb()
 	getMirror
 	pcpget -q "$MIRROR"/"$DBGZ"
 	gunzip -kf "$DBGZ"
-	if [ ! -f "$DEPDIR/$DB" ]; then
-		echo "Error downloading dependancy database...exiting"
-		exit 1
-	fi
 }
 
 generate_dep_files()
 {
 	awk 'BEGIN {FS="\n";RS=""} { out=$1".dep"; for (i=2; i<=NF; i++) printf("%s\n", $(i)) >out; close(out) }' dep.db
-	if [ $? -ne 0 ]; then
-		echo "Dependancy database is potentially corrupt...exiting"
-		exit 1
-	fi
-
 }
 
 fix_missing_and_extraneous_dep_files()
