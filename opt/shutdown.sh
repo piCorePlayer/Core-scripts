@@ -13,7 +13,7 @@ esac
 if [ -x /usr/local/etc/init.d/slimserver ]; then
 	PID=$(pidof slimserver.pl)
 	if [ -n "$PID" ]; then
-		/usr/local/etc/init.d/slimserver stop
+		sudo /usr/local/etc/init.d/slimserver stop
 	fi
 fi
 
