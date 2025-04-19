@@ -5,9 +5,24 @@ if [ -n "$DISPLAY" ]
 then
 	`which editor >/dev/null` && EDITOR=editor || EDITOR=vi
 else
-	EDITOR=vi
+	`which nano >/dev/null` && EDITOR=nano || EDITOR=vi
 fi
 export EDITOR
+
+PS1='\[\033[01;32m\]\u@\h:\[\033[00m\]\[\033[01;34m\]\w\$\[\033[00m\] '
+export PS1
+
+TMPDEV="$(readlink /etc/sysconfig/tcedir | cut -d '/' -f3)"
+TCEDEV="/dev/$TMPDEV"
+TCEMNT="/mnt/$TMPDEV"
+if [ -L /etc/sysconfig/bootdir ]; then
+	TMPDEV="$(readlink /etc/sysconfig/bootdir | cut -d '/' -f3)"
+	BOOTDEV="/dev/$TMPDEV"
+	BOOTMNT="/mnt/$TMPDEV"
+else
+	BOOTDEV=${TCEDEV%%?}1
+	BOOTMNT=${TCEMNT%%?}1
+fi
 
 # Alias definitions.
 #
@@ -23,4 +38,20 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
-alias ce='cd /etc/sysconfig/tcedir'
+# Change directory to
+alias ce="cd $TCEMNT/tce"
+alias ceo="cd $TCEMNT/tce/optional"
+alias c1="cd $BOOTMNT"
+alias c2="cd $TCEMNT"
+
+# Mount partition
+alias m1="mount $BOOTMNT"
+alias m2="mount $TCEMNT"
+
+# Unmount partition
+alias u1="umount $BOOTMNT"
+alias u2="umount $TCEMNT"
+
+# Edit config files
+alias vicfg="vi $BOOTMNT/config.txt"
+alias vicmd="vi $BOOTMNT/cmdline.txt"
