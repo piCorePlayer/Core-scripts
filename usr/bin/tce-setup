@@ -109,6 +109,15 @@ process_CD() {
 	fi
 }
 
+process_boot_device() {
+	PCPBOOTPART="$(tc_autoscan 'bootcode.bin' 'f')"
+	PCPBOOTDEV=${PCPBOOTPART%%/*}
+	find_mountpoint "$PCPBOOTDEV"
+	if [ -n "$MOUNTPOINT" ]; then
+		ln -s $MOUNTPOINT /etc/sysconfig/bootdir
+	fi
+}
+
 for i in `cat /proc/cmdline`; do
 	case $i in
 		tce=*) TCE=${i#*=} ;;
@@ -145,6 +154,7 @@ if [ "$1" == "booting" ] && [ -n "$ONLYBASE" ]; then
 	fi
 else
 	process_normal_tcedir
+	process_boot_device
 fi
 
 # Finally check for CD Extensions if requested
