@@ -36,7 +36,7 @@ then
         then
             /usr/bin/getTime.sh
             if [ $NRT -gt 5 ];
-            then 
+            then
                 break
             fi
             CNT=0
