@@ -16,7 +16,7 @@ for DEVICE in $NETDEVICES; do
   if [ "$?" != 0 ]; then
     trap 2 3 11
     if [ -x /usr/local/sbin/dhcpcd ]; then
-      /usr/local/sbin/dhcpcd --config /usr/local/etc/dhcpcd.conf --logfile /var/log/vpn_dhcpcd.log --script /usr/local/lib/dhcpcd/dhcpcd-run-hooks $DEVICE
+      /usr/local/sbin/dhcpcd --config /usr/local/etc/dhcpcd.conf --logfile /var/log/pcp_dhcpcd.log --script /usr/local/lib/dhcpcd/dhcpcd-run-hooks $DEVICE
     else
       # Start udhcpc with 5 requests, every 3s, repeat after 20s
       /sbin/udhcpc -b -t 5 -T 3 -A 20 -i $DEVICE -x hostname:$(/bin/hostname) -p /var/run/udhcpc.$DEVICE.pid >/dev/null 2>&1 &
