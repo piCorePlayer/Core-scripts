@@ -14,14 +14,14 @@ NETDEVICES="$(awk -F: '/eth.:|tr.:/{print $1}' /proc/net/dev 2>/dev/null)"
 for DEVICE in $NETDEVICES; do
   ifconfig $DEVICE | grep -q "inet addr"
   if [ "$?" != 0 ]; then
-    trap 2 3 11
+    trap "" 2 3 11
     if [ -x /usr/local/sbin/dhcpcd ]; then
       /usr/local/sbin/dhcpcd --config /usr/local/etc/dhcpcd.conf --logfile /var/log/pcp_dhcpcd.log --script /usr/local/lib/dhcpcd/dhcpcd-run-hooks $DEVICE
     else
       # Start udhcpc with 5 requests, every 3s, repeat after 20s
       /sbin/udhcpc -b -t 5 -T 3 -A 20 -i $DEVICE -x hostname:$(/bin/hostname) -p /var/run/udhcpc.$DEVICE.pid >/dev/null 2>&1 &
     fi
-    trap "" 2 3 11
+    trap - 2 3 11
     sleep 1
   fi
 done
