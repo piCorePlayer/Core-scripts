@@ -84,7 +84,7 @@ process() {
 	export PATH="/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin"
 	[ "$applist" ] && su "$USER" -c "/usr/bin/micropython /usr/bin/tce-bootload `dirname $1` $applist"
 	export PATH=$TMPTMP
-	chown root.staff $TCEINSTALLED
+	chown root:staff $TCEINSTALLED
 	chmod 775 $TCEINSTALLED
 	if [ -s /tmp/aberr ]; then
 		echo "occured while loading:  $applist" >> /tmp/aberr
