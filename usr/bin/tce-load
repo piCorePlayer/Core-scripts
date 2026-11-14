@@ -80,11 +80,7 @@ fetch_app() {
 }
 
 make_loop() {
-    sudo sh -c '
-        device=$(busybox losetup -f) || exit 1
-        [ -b "$device" ] ||
-            busybox mknod -m 660 "$device" b 7 "${device##*/loop}"
-    '
+	device="$(sudo busybox losetup -f)"
 }
 
 copyInstall() {
